@@ -11,7 +11,7 @@ import { useState } from 'react'
 import dynamic from 'next/dynamic'
 import Axios from 'axios'
 
-const Drawer = dynamic(() => import('./drawer'))
+const Drawer = dynamic(() => import('@/pages/users/drawer'))
 
 export default function Users() {
   const { data, isLoading, reloadData } = useFetching({

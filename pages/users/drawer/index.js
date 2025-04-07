@@ -22,7 +22,8 @@ export default function Popup({ onClose, isOpen }) {
 
   const onFinish = async (values) => {
     setLoading(true)
-    const method = Object.keys(isOpen).length > 0 ? 'PATCH' : 'POST'
+    const method =
+      Object.keys(isOpen || {}).length > 0 ? 'PATCH' : 'POST'
     const url = {
       PATCH: `/api/users/${isOpen.id}/edit`,
       POST: `/api/users/create`,
@@ -54,7 +55,7 @@ export default function Popup({ onClose, isOpen }) {
   }
 
   useEffect(() => {
-    if (Object.keys(isOpen).length > 0) {
+    if (Object.keys(isOpen || {}).length > 0) {
       form.setFieldsValue({
         name: isOpen.name,
         email: isOpen.email,
@@ -140,7 +141,7 @@ export default function Popup({ onClose, isOpen }) {
           label="Password"
           name="password"
           extra={
-            Object.keys(isOpen).length > 0 ? (
+            Object.keys(isOpen || {}).length > 0 ? (
               <Typography.Text mark>
                 Jika ingin merubah password saat ini, silahkan isi
                 field password
@@ -148,7 +149,7 @@ export default function Popup({ onClose, isOpen }) {
             ) : null
           }
           rules={
-            !Object.keys(isOpen).length > 0
+            !Object.keys(isOpen || {}).length > 0
               ? [
                   {
                     required: true,
