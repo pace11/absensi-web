@@ -61,7 +61,7 @@ export default function Popup({ onClose, isOpen }) {
         email: isOpen.email,
       })
     }
-  }, [isOpen])
+  }, [isOpen, form])
 
   return (
     <Drawer
