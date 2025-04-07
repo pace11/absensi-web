@@ -1,36 +1,58 @@
+# version: '3.8'
+
+# services:
+#   mysql:
+#     image: mysql:8.0
+#     container_name: mysql_container
+#     restart: always
+#     environment:
+#       MYSQL_ROOT_PASSWORD: rootpassword
+#       MYSQL_DATABASE: mydatabase
+#       MYSQL_USER: myuser
+#       MYSQL_PASSWORD: mypassword
+#     ports:
+#       - '3306:3306'
+#     volumes:
+#       - mysql_data:/var/lib/mysql
+#     networks:
+#       - my_network
+
+#   phpmyadmin:
+#     image: phpmyadmin/phpmyadmin
+#     container_name: phpmyadmin_container
+#     restart: always
+#     environment:
+#       PMA_HOST: mysql
+#       MYSQL_ROOT_PASSWORD: rootpassword
+#     ports:
+#       - '8080:80'
+#     networks:
+#       - my_network
+
+# volumes:
+#   mysql_data:
+
+# networks:
+#   my_network:
+
 version: '3.8'
 
 services:
-  mysql:
-    image: mysql:8.0
-    container_name: mysql_container
+  nextjs:
+    build: .
+    container_name: absensi
     restart: always
-    environment:
-      MYSQL_ROOT_PASSWORD: rootpassword
-      MYSQL_DATABASE: mydatabase
-      MYSQL_USER: myuser
-      MYSQL_PASSWORD: mypassword
     ports:
-      - '3306:3306'
-    volumes:
-      - mysql_data:/var/lib/mysql
-    networks:
-      - my_network
-
-  phpmyadmin:
-    image: phpmyadmin/phpmyadmin
-    container_name: phpmyadmin_container
-    restart: always
+      - '3000:3000'
     environment:
-      PMA_HOST: mysql
-      MYSQL_ROOT_PASSWORD: rootpassword
-    ports:
-      - '8080:80'
+      - NODE_ENV=production
     networks:
-      - my_network
-
-volumes:
-  mysql_data:
+      custom_network:
+        ipv4_address: 172.21.1.20
 
 networks:
-  my_network:
+  custom_network:
+    driver: bridge
+    ipam:
+      config:
+        - subnet: 172.21.1.0/24
