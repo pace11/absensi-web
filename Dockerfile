@@ -1,26 +1,17 @@
-# Gunakan Node.js sebagai base image
-FROM node:18-alpine
+FROM node:22.14.0
 
-# Set working directory
 WORKDIR /app
 
-# Copy .env
 COPY .env .env
 
-# Copy file package.json dan package-lock.json
 COPY package.json ./
+COPY package-lock.json ./
+RUN npm ci
 
-# Install dependencies
-RUN npm install
-
-# Copy semua file ke dalam container
 COPY . .
 
-# Build aplikasi Next.js
 RUN npm run build
 
-# Expose port 3000
 EXPOSE 3000
 
-# Perintah untuk menjalankan aplikasi
 CMD ["npm", "run", "start"]
