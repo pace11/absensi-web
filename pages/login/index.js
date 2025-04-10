@@ -68,7 +68,9 @@ const Login = () => {
         </p>
         <p style={{ textAlign: 'center' }}>
           <Image
-            src="/logo.png"
+            src={`${
+              process.env.NEXT_PUBLIC_BASE_PATH || ''
+            }/logo.png`}
             alt="logo"
             width={100}
             height={120}
