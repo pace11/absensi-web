@@ -52,7 +52,10 @@ export default function Popup({ onClose, isOpen }) {
 
   const disableWeekend = (current) => {
     const day = dayjs(current).day()
-    return [0, 6].includes(day)
+    return (
+      (current && current < dayjs().startOf('day')) ||
+      [0, 6].includes(day)
+    )
   }
 
   return (

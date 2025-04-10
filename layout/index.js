@@ -17,7 +17,10 @@ const LayoutApp = ({ children }) => {
 
   const handleDropdownClick = (value) => {
     if (value.key === 'logout') {
-      signOut()
+      signOut({
+        callbackUrl:
+          process.env.NEXT_PUBLIC_LOGOUT_REDIRECT_URL || '/',
+      })
     }
 
     if (value.key === 'profile') {
