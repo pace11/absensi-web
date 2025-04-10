@@ -23,10 +23,9 @@ export default function Popup({ onClose, isOpen }) {
 
   const onFinish = async (values) => {
     setLoading(true)
-    const method = 'POST'
     try {
       const response = await Axios({
-        method,
+        method: 'POST',
         url: '/api/leave/create',
         data: values,
       })
@@ -35,15 +34,17 @@ export default function Popup({ onClose, isOpen }) {
         notification.success({
           message: 'Info',
           description: 'Berhasil menyimpan data',
-          duration: 1,
+          duration: 2,
         })
         onClose()
       }
     } catch (error) {
       notification.error({
         message: 'Error',
-        description: `${error.message}`,
-        duration: 1,
+        description: `${
+          error.response.data.message || error.message
+        }`,
+        duration: 2,
       })
     } finally {
       setLoading(false)

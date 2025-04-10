@@ -1,67 +1,80 @@
 import { attendancesTable } from '@/lib/db/schema'
-import { sql, eq } from 'drizzle-orm'
+import { eq, sql } from 'drizzle-orm'
 import { db } from '@/lib/db'
-import dayjs from 'dayjs'
 import { withAuth } from '@/lib/middleware'
+import dayjs from 'dayjs'
 
 async function handler(req, res, session) {
   if (req.method !== 'POST') {
-    res
-      .status(405)
-      .json({ data: [{ message: 'Method not allowed' }] })
+    return res.status(405).json({ message: 'Method not allowed' })
   }
 
   try {
-    const payload = req.body
-    payload.user_id = session.id
-    const currentTimeLocal = dayjs().format('YYYY-MM-DD')
+    const { type } = req.query
+    const payload = { ...req.body, user_id: session.id }
 
-    // checking if current date is exist
+    // Ambil semua absen user hari ini
+    const today = dayjs(payload.current_time_local).format(
+      'YYYY-MM-DD',
+    )
+
     const isAttended = await db
-      .execute(
-        sql`SELECT * FROM ${attendancesTable} WHERE DATE(${attendancesTable.created_at_local})=${currentTimeLocal} LIMIT 1`,
+      .select()
+      .from(attendancesTable)
+      .where(
+        sql`DATE(${attendancesTable.created_at_local}) = ${today} AND ${attendancesTable.user_id} = ${session.id}`,
       )
+      .limit(1)
       .then((res) => res[0])
 
-    if (req.query.type === 'check_in') {
-      payload.check_in = dayjs().format('HH:mm:ss')
-      payload.created_at_local = dayjs().format('YYYY-MM-DD HH:mm:ss')
-      payload.is_accepted = true
-
-      if (!isAttended.length) {
-        const data = await db
-          .insert(attendancesTable)
-          .values({ ...payload })
-        res.status(200).json({ data })
-      } else {
-        res
-          .status(400)
-          .json({ message: 'Anda sudah absen masuk hari ini' })
+    // ✅ Absensi masuk
+    if (type === 'check_in') {
+      if (!isAttended) {
+        const result = await db.insert(attendancesTable).values({
+          ...payload,
+          is_accepted: true,
+        })
+        return res.status(200).json(result)
       }
+
+      return res
+        .status(400)
+        .json({ message: 'Anda sudah absen masuk hari ini' })
     }
 
-    if (req.query.type === 'check_out') {
-      payload.check_out = dayjs().format('HH:mm:ss')
-      payload.status = 'present'
+    // ✅ Absensi keluar
+    if (type === 'check_out') {
+      if (!isAttended) {
+        return res
+          .status(400)
+          .json({ message: 'Anda harus absen masuk terlebih dahulu' })
+      }
 
-      if (!!isAttended.length && !isAttended[0].check_out) {
-        const data = await db
-          .update(attendancesTable)
-          .set({ ...payload, updated_at: sql`NOW()` })
-          .where(eq(attendancesTable.id, Number(isAttended[0].id)))
-        res.status(200).json({ data })
-      } else if (!!isAttended.length && isAttended[0].check_out) {
-        res
+      if (isAttended.check_out) {
+        return res
           .status(400)
           .json({ message: 'Anda sudah absen pulang hari ini' })
-      } else {
-        res.status(400).json({
-          message: 'Anda harus absen masuk terlebih dahulu',
-        })
       }
+
+      const result = await db
+        .update(attendancesTable)
+        .set({
+          ...payload,
+          status: 'present',
+          updated_at: sql`NOW()`,
+        })
+        .where(eq(attendancesTable.id, isAttended.id))
+
+      return res.status(200).json(result)
     }
+
+    // Jika type tidak dikenal
+    return res.status(400).json({ message: 'Tipe absen tidak valid' })
   } catch (error) {
-    res.status(500).json({ error })
+    console.error(error)
+    return res
+      .status(500)
+      .json({ message: 'Terjadi kesalahan server', error })
   }
 }
 

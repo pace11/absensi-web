@@ -53,7 +53,7 @@ export default function IjinEmployee() {
             notification.success({
               message: 'Info',
               description: 'Berhasil menghapus data',
-              duration: 1,
+              duration: 2,
             })
             setDelete(false)
             reloadData()
@@ -62,7 +62,7 @@ export default function IjinEmployee() {
           notification.error({
             message: 'Error',
             description: `${error.message}`,
-            duration: 1,
+            duration: 2,
           })
         } finally {
           setDelete(false)
@@ -95,9 +95,9 @@ export default function IjinEmployee() {
     },
     {
       title: 'Tanggal dibuat',
-      key: 'created_at',
-      render: ({ created_at }) =>
-        dayjs(created_at)
+      key: 'created_at_local',
+      render: ({ created_at_local }) =>
+        dayjs(created_at_local)
           .locale('id')
           .format('dddd, DD MMMM YYYY HH:mm'),
     },

@@ -13,6 +13,7 @@ import Axios from 'axios'
 import { useState } from 'react'
 import { useFetching } from '@/hooks/useFetching'
 import { useRouter } from 'next/router'
+import dayjs from 'dayjs'
 
 const Clock = dynamic(() => import('@/components/clock'), {
   ssr: false,
@@ -47,20 +48,25 @@ export default function Absensi() {
           // coordinates: `${location?.lat || ''},${
           //   location?.lng || ''
           // }`,
+          [type]: dayjs().format('HH:mm:ss'),
+          ...(type === 'check_in' && {
+            created_at_local: dayjs().format('YYYY-MM-DD HH:mm:ss'),
+          }),
+          current_time_local: dayjs().format('YYYY-MM-DD'),
           coordinates: 'lat,lng',
         },
       })
       notification.success({
         message: 'Info',
         description: message[type],
-        duration: 1,
+        duration: 2,
       })
     } catch (error) {
       if (!!error?.response?.data?.message) {
         notification.error({
           message: 'Error',
           description: `${error.response.data.message}`,
-          duration: 1,
+          duration: 2,
         })
       }
     } finally {

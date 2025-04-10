@@ -33,7 +33,7 @@ export default function Users() {
         notification.success({
           message: 'Info',
           description: 'Berhasil menyimpan data',
-          duration: 1,
+          duration: 2,
         })
         reloadData()
       }
@@ -41,7 +41,7 @@ export default function Users() {
       notification.error({
         message: 'Error',
         description: `${error.message}`,
-        duration: 1,
+        duration: 2,
       })
     } finally {
       setLoadingSubmit(false)
