@@ -90,11 +90,14 @@ export default function Absensi() {
     {
       title: 'Status',
       key: 'status',
-      render: ({ status }) => (
-        <Tag color={BADGE_STATUS?.[status].color}>
-          {BADGE_STATUS?.[status].text}
-        </Tag>
-      ),
+      render: ({ status }) =>
+        status ? (
+          <Tag color={BADGE_STATUS?.[status]?.color}>
+            {BADGE_STATUS?.[status]?.text}
+          </Tag>
+        ) : (
+          '-'
+        ),
     },
     {
       title: 'Aksi',
