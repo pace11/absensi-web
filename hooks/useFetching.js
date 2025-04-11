@@ -10,8 +10,8 @@ export const useFetching = ({ path, query }) => {
     `${path}${params}`,
     fetcher,
     {
-      revalidateOnFocus: false,
-      revalidateOnReconnect: false,
+      revalidateOnFocus: true,
+      revalidateOnReconnect: true,
     },
   )
 

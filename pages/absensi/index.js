@@ -26,7 +26,7 @@ export default function Absensi() {
     isLoading,
     reloadData,
   } = useFetching({
-    path: '/api/attend/user',
+    path: `/api/attend/user?date_now=${dayjs().format('YYYY-MM-DD')}`,
   })
 
   // const { getLocation, location } = useGetLocation()
@@ -171,8 +171,8 @@ export default function Absensi() {
                 size="small"
                 columns={attendanceColumns}
                 dataSource={
-                  attendances?.data?.length > 0
-                    ? attendances.data
+                  attendances?.length > 0
+                    ? attendances
                     : [{ check_in: '', check_out: '' }]
                 }
                 pagination={false}

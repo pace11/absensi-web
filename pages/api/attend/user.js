@@ -12,15 +12,15 @@ async function handler(req, res, session) {
   }
 
   try {
-    const currentTimeLocal = dayjs().format('YYYY-MM-DD')
+    const { date_now } = req.query
 
     const data = await db
       .execute(
-        sql`SELECT * FROM ${attendancesTable} WHERE DATE(${attendancesTable.created_at_local})=${currentTimeLocal} AND ${attendancesTable.user_id}=${session.id} LIMIT 1`,
+        sql`SELECT * FROM ${attendancesTable} WHERE DATE(${attendancesTable.created_at_local})=${date_now} AND ${attendancesTable.user_id}=${session.id} LIMIT 1`,
       )
       .then((res) => res[0])
 
-    res.status(200).json({ data })
+    res.status(200).json(data)
   } catch (error) {
     res.status(500).json({ error })
   }
