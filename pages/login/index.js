@@ -68,9 +68,7 @@ const Login = () => {
         </p>
         <p style={{ textAlign: 'center' }}>
           <Image
-            src={`${
-              process.env.NEXT_PUBLIC_BASE_PATH || ''
-            }/logo.png`}
+            src="https://res.cloudinary.com/dby4ywiss/image/upload/v1744330997/app/absensi/logo_l15opu.png"
             alt="logo"
             width={100}
             height={120}
