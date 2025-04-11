@@ -3,6 +3,11 @@ import { eq, sql } from 'drizzle-orm'
 import { db } from '@/lib/db'
 import { withAuth } from '@/lib/middleware'
 import dayjs from 'dayjs'
+import utc from 'dayjs/plugin/utc'
+import timezone from 'dayjs/plugin/timezone'
+
+dayjs.extend(utc)
+dayjs.extend(timezone)
 
 async function handler(req, res, session) {
   if (req.method !== 'POST') {
@@ -14,9 +19,9 @@ async function handler(req, res, session) {
     const payload = { ...req.body, user_id: session.id }
 
     // Ambil semua absen user hari ini
-    const today = dayjs(payload.current_time_local).format(
-      'YYYY-MM-DD',
-    )
+    const today = dayjs()
+      .tz(process.env.LOCAL_TIMEZONE)
+      .format('YYYY-MM-DD')
 
     const isAttended = await db
       .select()
@@ -33,6 +38,12 @@ async function handler(req, res, session) {
         const result = await db.insert(attendancesTable).values({
           ...payload,
           is_accepted: true,
+          [type]: dayjs()
+            .tz(process.env.LOCAL_TIMEZONE)
+            .format('HH:mm:ss'),
+          created_at_local: dayjs()
+            .tz(process.env.LOCAL_TIMEZONE)
+            .format('YYYY-MM-DD HH:mm:ss'),
         })
         return res.status(200).json(result)
       }
@@ -61,6 +72,9 @@ async function handler(req, res, session) {
         .set({
           ...payload,
           status: 'present',
+          [type]: dayjs()
+            .tz(process.env.LOCAL_TIMEZONE)
+            .format('HH:mm:ss'),
           updated_at: sql`NOW()`,
         })
         .where(eq(attendancesTable.id, isAttended.id))

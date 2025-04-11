@@ -15,7 +15,7 @@ export const menu = (role = 'unauthenticated') => {
       // },
       {
         key: '/ijin',
-        label: 'Request Ijin',
+        label: 'Permohonan Ijin',
       },
     ],
     employee: [
@@ -29,7 +29,7 @@ export const menu = (role = 'unauthenticated') => {
       },
       {
         key: '/ijin',
-        label: 'Request Ijin',
+        label: 'Permohonan Ijin',
       },
     ],
     unauthenticated: [

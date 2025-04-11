@@ -7,13 +7,14 @@ import {
   Table,
   Row,
   Col,
+  Tag,
 } from 'antd'
 // import useGetLocation from '@/hooks/useGetLocation'
 import Axios from 'axios'
 import { useState } from 'react'
 import { useFetching } from '@/hooks/useFetching'
 import { useRouter } from 'next/router'
-import dayjs from 'dayjs'
+import { BADGE_STATUS } from '@/constants'
 
 const Clock = dynamic(() => import('@/components/clock'), {
   ssr: false,
@@ -26,7 +27,7 @@ export default function Absensi() {
     isLoading,
     reloadData,
   } = useFetching({
-    path: `/api/attend/user?date_now=${dayjs().format('YYYY-MM-DD')}`,
+    path: '/api/attend/user',
   })
 
   // const { getLocation, location } = useGetLocation()
@@ -48,11 +49,6 @@ export default function Absensi() {
           // coordinates: `${location?.lat || ''},${
           //   location?.lng || ''
           // }`,
-          [type]: dayjs().format('HH:mm:ss'),
-          ...(type === 'check_in' && {
-            created_at_local: dayjs().format('YYYY-MM-DD HH:mm:ss'),
-          }),
-          current_time_local: dayjs().format('YYYY-MM-DD'),
           coordinates: 'lat,lng',
         },
       })
@@ -92,6 +88,15 @@ export default function Absensi() {
       ),
     },
     {
+      title: 'Status',
+      key: 'status',
+      render: ({ status }) => (
+        <Tag color={BADGE_STATUS?.[status].color}>
+          {BADGE_STATUS?.[status].text}
+        </Tag>
+      ),
+    },
+    {
       title: 'Aksi',
       render: () => (
         <Button
@@ -116,7 +121,7 @@ export default function Absensi() {
       <Card
         variant="borderless"
         style={{
-          width: 400,
+          width: 500,
           background: 'linear-gradient(to right, #1677ff, #0050c0)',
           color: 'white',
         }}
@@ -124,9 +129,13 @@ export default function Absensi() {
         <Clock />
         <Card variant="borderless" style={{ marginTop: '20px' }}>
           <Row gutter={[16, 16]}>
-            <Col span={18} offset={3}>
+            <Col span={24}>
               <Row align="middle" justify="center">
                 <Typography.Text>Waktu Kerja Normal</Typography.Text>
+              </Row>
+            </Col>
+            <Col span={24}>
+              <Row align="middle" justify="center">
                 <Typography.Title
                   level={3}
                   style={{ padding: 0, margin: 0 }}

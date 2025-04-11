@@ -3,6 +3,11 @@ import { sql } from 'drizzle-orm'
 import { db } from '@/lib/db'
 import dayjs from 'dayjs'
 import { withAuth } from '@/lib/middleware'
+import utc from 'dayjs/plugin/utc'
+import timezone from 'dayjs/plugin/timezone'
+
+dayjs.extend(utc)
+dayjs.extend(timezone)
 
 async function handler(req, res, session) {
   if (req.method !== 'GET') {
@@ -12,11 +17,13 @@ async function handler(req, res, session) {
   }
 
   try {
-    const { date_now } = req.query
+    const today = dayjs()
+      .tz(process.env.LOCAL_TIMEZONE)
+      .format('YYYY-MM-DD')
 
     const data = await db
       .execute(
-        sql`SELECT * FROM ${attendancesTable} WHERE DATE(${attendancesTable.created_at_local})=${date_now} AND ${attendancesTable.user_id}=${session.id} LIMIT 1`,
+        sql`SELECT * FROM ${attendancesTable} WHERE DATE(${attendancesTable.created_at_local})=${today} AND ${attendancesTable.user_id}=${session.id} LIMIT 1`,
       )
       .then((res) => res[0])
 
