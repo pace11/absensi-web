@@ -1,7 +1,7 @@
 {
   "version": "5",
   "dialect": "mysql",
-  "id": "0b519181-ce33-493b-83ed-d1c7a785d656",
+  "id": "ce3c82ce-3da0-4d56-b88b-98ef1bf0ddd9",
   "prevId": "00000000-0000-0000-0000-000000000000",
   "tables": {
     "attendances": {
@@ -156,6 +156,13 @@
         "coordinates": {
           "name": "coordinates",
           "type": "text",
+          "primaryKey": false,
+          "notNull": false,
+          "autoincrement": false
+        },
+        "radius": {
+          "name": "radius",
+          "type": "int",
           "primaryKey": false,
           "notNull": false,
           "autoincrement": false

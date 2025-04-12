@@ -1,4 +1,4 @@
-import { attendancesTable } from '@/lib/db/schema'
+import { attendancesTable, settingTable } from '@/lib/db/schema'
 import { eq, sql } from 'drizzle-orm'
 import { db } from '@/lib/db'
 import { withAuth } from '@/lib/middleware'
@@ -32,25 +32,37 @@ async function handler(req, res, session) {
       .limit(1)
       .then((res) => res[0])
 
-    // ✅ Absensi masuk
-    if (type === 'check_in') {
-      if (!isAttended) {
-        const result = await db.insert(attendancesTable).values({
-          ...payload,
-          is_accepted: true,
-          [type]: dayjs()
-            .tz(process.env.LOCAL_TIMEZONE)
-            .format('HH:mm:ss'),
-          created_at_local: dayjs()
-            .tz(process.env.LOCAL_TIMEZONE)
-            .format('YYYY-MM-DD HH:mm:ss'),
-        })
-        return res.status(200).json(result)
-      }
+    const setting = await db.select().from(settingTable).limit(1)
 
-      return res
-        .status(400)
-        .json({ message: 'Anda sudah absen masuk hari ini' })
+    if (type === 'check_in') {
+      if (
+        Number(payload.radius) === 0 ||
+        Number(payload.radius) > setting[0].radius
+      ) {
+        return res.status(400).json({
+          message:
+            'Radius anda tidak sesuai, pastikan radius dari lokasi anda saat ini memenuhi kriteria',
+        })
+      } else {
+        // ✅ Absensi masuk
+        if (!isAttended) {
+          const result = await db.insert(attendancesTable).values({
+            ...payload,
+            is_accepted: true,
+            [type]: dayjs()
+              .tz(process.env.LOCAL_TIMEZONE)
+              .format('HH:mm:ss'),
+            created_at_local: dayjs()
+              .tz(process.env.LOCAL_TIMEZONE)
+              .format('YYYY-MM-DD HH:mm:ss'),
+          })
+          return res.status(200).json(result)
+        }
+
+        return res
+          .status(400)
+          .json({ message: 'Anda sudah absen masuk hari ini' })
+      }
     }
 
     // ✅ Absensi keluar
@@ -93,16 +105,3 @@ async function handler(req, res, session) {
 }
 
 export default withAuth(handler)
-
-// console.log('data => ', convertLatLng(payload.coordinates)?.[0])
-// const result = getPreciseDistance(
-//   {
-//     latitude: convertLatLng(payload.coordinates)?.[0],
-//     longitude: convertLatLng(payload.coordinates)?.[1],
-//   },
-//   {
-//     latitude: -2.564944743055905,
-//     longitude: 140.51843175345988,
-//   },
-// )
-// -2.564944743055905, 140.51843175345988

@@ -6,6 +6,7 @@ import {
   TimePicker,
   Button,
   notification,
+  InputNumber,
 } from 'antd'
 import { SaveOutlined } from '@ant-design/icons'
 import Axios from 'axios'
@@ -33,7 +34,7 @@ export default function Users() {
         notification.success({
           message: 'Info',
           description: 'Berhasil menyimpan data',
-          duration: 2,
+          duration: 5,
         })
         reloadData()
       }
@@ -41,7 +42,7 @@ export default function Users() {
       notification.error({
         message: 'Error',
         description: `${error.message}`,
-        duration: 2,
+        duration: 5,
       })
     } finally {
       setLoadingSubmit(false)
@@ -50,17 +51,16 @@ export default function Users() {
 
   useEffect(() => {
     form.setFieldsValue({
-      name: setting?.data?.[0]?.name,
-      address: setting?.data?.[0]?.address,
-      coordinates: setting?.data?.[0]?.coordinates,
+      name: setting?.[0]?.name,
+      address: setting?.[0]?.address,
+      coordinates: setting?.[0]?.coordinates,
+      radius: setting?.[0]?.radius || 0,
       clock_in: dayjs(
-        setting?.data?.[0]?.clock_in ||
-          new Date().toLocaleDateString(),
+        setting?.[0]?.clock_in || new Date().toLocaleDateString(),
         'HH:mm:ss',
       ),
       clock_out: dayjs(
-        setting?.data?.[0]?.clock_out ||
-          new Date().toLocaleDateString(),
+        setting?.[0]?.clock_out || new Date().toLocaleDateString(),
         'HH:mm:ss',
       ),
     })
@@ -121,6 +121,24 @@ export default function Users() {
           <Input
             size="large"
             placeholder="Contoh: -2.5912033947738675,140.66899812206955"
+          />
+        </Form.Item>
+        <Form.Item
+          label="Radius"
+          name="radius"
+          rules={[
+            {
+              required: true,
+              message: 'Harap isikan radius!',
+            },
+          ]}
+        >
+          <InputNumber
+            size="large"
+            placeholder="100"
+            min={0}
+            max={1000000}
+            addonAfter="Meter"
           />
         </Form.Item>
         <Form.Item

@@ -43,7 +43,7 @@ export default function IjinAdmin() {
             notification.success({
               message: 'Info',
               description: 'Berhasil ACC Ijin',
-              duration: 2,
+              duration: 5,
             })
             setAcc(false)
             reloadData()
@@ -52,7 +52,7 @@ export default function IjinAdmin() {
           notification.error({
             message: 'Error',
             description: `${error.message}`,
-            duration: 2,
+            duration: 5,
           })
         } finally {
           setAcc(false)

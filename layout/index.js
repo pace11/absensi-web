@@ -55,7 +55,7 @@ const LayoutApp = ({ children }) => {
       </Header>
       <Content
         style={{
-          padding: '20px 50px',
+          padding: '20px 30px',
           overflowY: 'scroll',
         }}
       >

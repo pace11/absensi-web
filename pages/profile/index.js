@@ -53,7 +53,7 @@ export default function Profile({ session }) {
       notification.error({
         message: 'Error',
         description: `${error.message}`,
-        duration: 2,
+        duration: 5,
       })
     } finally {
       setLoadingSubmit(false)

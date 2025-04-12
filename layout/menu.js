@@ -9,13 +9,13 @@ export const menu = (role = 'unauthenticated') => {
         key: '/users',
         label: 'Pengguna',
       },
-      // {
-      //   key: '/setting',
-      //   label: 'Setting',
-      // },
       {
         key: '/ijin',
         label: 'Permohonan Ijin',
+      },
+      {
+        key: '/setting',
+        label: 'Setting',
       },
     ],
     employee: [

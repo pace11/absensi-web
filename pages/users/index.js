@@ -42,7 +42,7 @@ export default function Users() {
             notification.success({
               message: 'Info',
               description: 'Berhasil menghapus data',
-              duration: 2,
+              duration: 5,
             })
             setDelete(false)
             reloadData()
@@ -51,7 +51,7 @@ export default function Users() {
           notification.error({
             message: 'Error',
             description: `${error.message}`,
-            duration: 2,
+            duration: 5,
           })
         } finally {
           setDelete(false)

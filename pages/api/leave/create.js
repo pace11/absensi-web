@@ -26,7 +26,7 @@ async function handler(req, res, session) {
       .limit(1)
       .then((res) => res[0])
 
-    if (!isAttended.check_in) {
+    if (!isAttended?.check_in) {
       const insertValues = range.map((date) => ({
         user_id: session.id,
         check_in: null,
@@ -49,6 +49,7 @@ async function handler(req, res, session) {
         'Pengajuan ijin di tanggal hari ini tidak bisa diproses karena anda sudah absen masuk',
     })
   } catch (error) {
+    console.log('error ->', error)
     res.status(500).json({ error })
   }
 }

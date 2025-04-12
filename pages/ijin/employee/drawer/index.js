@@ -34,7 +34,7 @@ export default function Popup({ onClose, isOpen }) {
         notification.success({
           message: 'Info',
           description: 'Berhasil menyimpan data',
-          duration: 2,
+          duration: 5,
         })
         onClose()
       }
@@ -44,7 +44,7 @@ export default function Popup({ onClose, isOpen }) {
         description: `${
           error.response.data.message || error.message
         }`,
-        duration: 2,
+        duration: 5,
       })
     } finally {
       setLoading(false)

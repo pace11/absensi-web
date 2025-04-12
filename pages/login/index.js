@@ -24,14 +24,14 @@ const Login = () => {
       notification.error({
         message: 'Error',
         description: res.error,
-        duration: 2,
+        duration: 5,
       })
     } else {
       setIsLoading(false)
       notification.success({
         message: 'Info',
         description: 'Login Berhasil',
-        duration: 2,
+        duration: 5,
       })
       router.push('/')
     }
