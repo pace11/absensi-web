@@ -6,18 +6,23 @@ import {
   UserAddOutlined,
   ReloadOutlined,
   ExclamationCircleOutlined,
+  CalendarOutlined,
 } from '@ant-design/icons'
 import { useState } from 'react'
 import dynamic from 'next/dynamic'
 import Axios from 'axios'
 
 const Drawer = dynamic(() => import('@/pages/users/drawer'))
+const DrawerKalender = dynamic(() =>
+  import('@/pages/users/drawer/attendances'),
+)
 
 export default function Users() {
   const { data, isLoading, reloadData } = useFetching({
     path: '/api/users',
   })
   const [open, setOpen] = useState(false)
+  const [openKalender, setOpenKalender] = useState(false)
   const [isDelete, setDelete] = useState(false)
 
   const showConfirmDelete = (params) => {
@@ -89,6 +94,13 @@ export default function Users() {
             Ubah
           </Button>
           <Button
+            type="primary"
+            icon={<CalendarOutlined />}
+            onClick={() => setOpenKalender(item.id)}
+          >
+            Detail Absensi
+          </Button>
+          <Button
             danger
             type="primary"
             icon={<DeleteOutlined />}
@@ -138,6 +150,10 @@ export default function Users() {
           setOpen(false)
           reloadData()
         }}
+      />
+      <DrawerKalender
+        isOpen={openKalender}
+        onClose={() => setOpenKalender(false)}
       />
     </>
   )

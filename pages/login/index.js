@@ -38,15 +38,8 @@ const Login = () => {
   }
 
   return (
-    <Row
-      justify="center"
-      align="middle"
-      style={{
-        background: '#f5f5f5',
-        flexDirection: 'column',
-      }}
-    >
-      <Card variant="borderless" style={{ width: '350px' }}>
+    <Row justify="center" align="middle">
+      <Card variant="borderless" style={{ width: '400px' }}>
         <h2
           style={{
             textAlign: 'center',

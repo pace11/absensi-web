@@ -10,14 +10,20 @@ import {
   Button,
   Space,
   Spin,
+  Tag,
 } from 'antd'
 import { useFetching } from '@/hooks/useFetching'
 import { useState } from 'react'
 import dayjs from 'dayjs'
 import { badgeStatus } from '@/helpers/utils'
-import { ReloadOutlined } from '@ant-design/icons'
+import {
+  ReloadOutlined,
+  CheckCircleOutlined,
+  InfoCircleOutlined,
+  MinusCircleOutlined,
+} from '@ant-design/icons'
 
-export default function Kalender() {
+export default function Kalender({ user_id = '' }) {
   const [currentDate, setCurrentDate] = useState(
     dayjs().format('YYYY-MM-DD'),
   )
@@ -26,7 +32,7 @@ export default function Kalender() {
     isLoading,
     reloadData,
   } = useFetching({
-    path: `/api/attend/list?date=${currentDate}`,
+    path: `/api/attend/list?date=${currentDate}&user_id=${user_id}`,
   })
 
   const cellRender = (currentDate) => {
@@ -58,7 +64,7 @@ export default function Kalender() {
     ]
     const dateStr = currentDate.format('YYYY-MM-DD')
 
-    const data = listAttendances?.find(
+    const data = listAttendances?.attendances?.find(
       (item) => item.created_at_local === dateStr,
     )
 
@@ -109,13 +115,28 @@ export default function Kalender() {
         ]}
       >
         <Spin spinning={isLoading}>
-          <Calendar
-            cellRender={cellRender}
-            onPanelChange={(date) => {
-              setCurrentDate(dayjs(date).format('YYYY-MM-DD'))
-              reloadData()
-            }}
-          />
+          <Row gutter={[8, 8]}>
+            <Col span={24} style={{ textAlign: 'center' }}>
+              <Tag icon={<CheckCircleOutlined />} color="success">
+                {`Absen Full: ${listAttendances?.count?.present}`}
+              </Tag>
+              <Tag icon={<MinusCircleOutlined />} color="error">
+                {`Tidak Hadir: ${listAttendances?.count?.absent}`}
+              </Tag>
+              <Tag icon={<InfoCircleOutlined />} color="warning">
+                {`Ijin/Cuti/Sakit: ${listAttendances?.count?.leave}`}
+              </Tag>
+            </Col>
+            <Col span={24}>
+              <Calendar
+                dateCellRender={cellRender}
+                onPanelChange={(date) => {
+                  setCurrentDate(dayjs(date).format('YYYY-MM-DD'))
+                  reloadData()
+                }}
+              />
+            </Col>
+          </Row>
         </Spin>
       </Card>
     </>

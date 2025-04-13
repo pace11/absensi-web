@@ -1,4 +1,5 @@
 import { ProfileContextProvider } from '@/context/profileContextProvider'
+import 'antd/dist/antd.css'
 import '@/styles/globals.css'
 import 'dayjs/locale/id'
 import Layout from '@/layout'

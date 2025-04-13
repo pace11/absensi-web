@@ -76,6 +76,7 @@ export default function IjinEmployee() {
     {
       title: 'Tanggal',
       key: 'date_range',
+      width: 400,
       render: ({ date_range }) => `${convertDateRange(date_range)}`,
     },
     {
