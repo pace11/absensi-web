@@ -1,9 +1,9 @@
-FROM node:20.19.3-alpine
+FROM node:20.19.3
 
 WORKDIR /app
 
 COPY package*.json ./
-RUN npm ci --omit=dev
+RUN npm install --omit=dev
 COPY . .
 
 COPY .env .env
