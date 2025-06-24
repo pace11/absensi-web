@@ -125,9 +125,26 @@ export const convertDateRange = (dateRange) => {
   )
 }
 
-export const badgeStatusLeave = (status) => (
-  <Badge
-    status={Boolean(status) ? 'success' : 'processing'}
-    text={Boolean(status) ? 'Disetujui' : 'Menunggu disetujui'}
-  />
-)
+export const badgeStatusLeave = (status) => {
+  const message = {
+    in_progress: {
+      status: 'processing',
+      text: 'Menunggu disetujui',
+    },
+    accepted: {
+      status: 'success',
+      text: 'Disetujui',
+    },
+    declined: {
+      status: 'error',
+      text: 'Ditolak',
+    },
+  }
+
+  return (
+    <Badge
+      status={message?.[status]?.status || 'processing'}
+      text={message?.[status]?.text || message.in_progress.text}
+    />
+  )
+}

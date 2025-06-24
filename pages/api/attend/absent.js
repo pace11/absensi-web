@@ -20,7 +20,7 @@ export default async function handler(req, res) {
     const data = await db
       .execute(
         sql`
-        INSERT INTO attendances (user_id, status, is_accepted, created_at_local)
+        INSERT INTO attendances (user_id, status, accepted, created_at_local)
           SELECT u.id, 'absent', true, ${currentDate}
           FROM users u
           WHERE u.role = 'employee'

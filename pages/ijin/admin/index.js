@@ -7,12 +7,16 @@ import {
   Modal,
   Row,
   Col,
+  Input,
+  Form,
 } from 'antd'
 import { useFetching } from '@/hooks/useFetching'
 import {
   ReloadOutlined,
   ExclamationCircleOutlined,
   CheckCircleOutlined,
+  CloseCircleOutlined,
+  LinkOutlined,
 } from '@ant-design/icons'
 import { useState } from 'react'
 import Axios from 'axios'
@@ -24,6 +28,7 @@ export default function IjinAdmin() {
     path: '/api/leave/admin',
   })
   const [isAcc, setAcc] = useState(false)
+  const [form] = Form.useForm()
 
   const showConfirmAcc = (params) => {
     Modal.confirm({
@@ -62,6 +67,74 @@ export default function IjinAdmin() {
     })
   }
 
+  const showConfirmDecline = (params) => {
+    Modal.confirm({
+      title: 'Konfirmasi',
+      content: (
+        <Row gutter={[16, 16]}>
+          <Col span={24}>
+            <Form
+              form={form}
+              labelCol={{
+                span: 24,
+              }}
+              wrapperCol={{
+                span: 24,
+              }}
+              initialValues={{
+                description: 'Ditolak',
+              }}
+              autoComplete="off"
+              labelAlign="left"
+            >
+              <Form.Item label="Keterangan" name="description">
+                <Input.TextArea
+                  size="Large"
+                  defaultValue="Ditolak"
+                  placeholder="Keterangan ..."
+                />
+              </Form.Item>
+            </Form>
+          </Col>
+        </Row>
+      ),
+      icon: <ExclamationCircleOutlined />,
+      okText: 'Ya',
+      cancelText: 'Tidak',
+      onOk: async () => {
+        try {
+          const response = await Axios({
+            method: 'POST',
+            url: `/api/leave/acc?ids=${params.ids}&type=decline`,
+            data: { ...form.getFieldsValue() },
+          })
+          if (response.status === 200) {
+            notification.success({
+              message: 'Info',
+              description: 'Berhasil Tolak Ijin',
+              duration: 5,
+            })
+            form.setFieldsValue({
+              description: 'Ditolak',
+            })
+            reloadData()
+          }
+        } catch (error) {
+          notification.error({
+            message: 'Error',
+            description: `${error.message}`,
+            duration: 5,
+          })
+        } finally {
+          form.setFieldsValue({
+            description: 'Ditolak',
+          })
+        }
+      },
+      onCancel: () => {},
+    })
+  }
+
   const columns = [
     {
       title: 'Tanggal',
@@ -75,14 +148,29 @@ export default function IjinAdmin() {
       render: ({ duration }) => `${duration} Hari`,
     },
     {
+      title: 'File Pendukung',
+      key: 'file',
+      render: ({ file }) =>
+        file ? (
+          <a
+            href={`${process.env.NEXT_PUBLIC_PREVIEW_URL}/${file}`}
+            target="_blank"
+          >
+            File <LinkOutlined />
+          </a>
+        ) : (
+          ''
+        ),
+    },
+    {
       title: 'Keterangan',
       key: 'description',
       dataIndex: 'description',
     },
     {
       title: 'Status',
-      key: 'is_accepted',
-      render: ({ is_accepted }) => badgeStatusLeave(is_accepted),
+      key: 'accepted',
+      render: ({ accepted }) => badgeStatusLeave(accepted),
     },
     {
       title: 'Tanggal dibuat',
@@ -95,8 +183,8 @@ export default function IjinAdmin() {
     {
       title: 'Aksi',
       render: (item) =>
-        !Boolean(item.is_accepted) ? (
-          <Space direction="horizontal">
+        !['declined', 'accepted'].includes(item.accepted) ? (
+          <Space direction="vertical">
             <Button
               type="primary"
               icon={<CheckCircleOutlined />}
@@ -104,6 +192,15 @@ export default function IjinAdmin() {
               loading={item.ids === isAcc}
             >
               ACC Ijin
+            </Button>
+            <Button
+              type="primary"
+              danger
+              icon={<CloseCircleOutlined />}
+              onClick={() => showConfirmDecline(item)}
+              loading={item.ids === isAcc}
+            >
+              Tolak Ijin
             </Button>
           </Space>
         ) : null,

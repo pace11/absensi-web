@@ -11,11 +11,13 @@ import {
 import { useRef, useState } from 'react'
 import Axios from 'axios'
 import dayjs from 'dayjs'
+import UploadFile from '@/components/upload-file'
 
 export default function Popup({ onClose, isOpen }) {
   const refButton = useRef(null)
   const [form] = Form.useForm()
   const [isLoading, setLoading] = useState(false)
+  const [fileList, setFileList] = useState([])
 
   const onSubmitClick = () => {
     refButton.current.click()
@@ -23,11 +25,13 @@ export default function Popup({ onClose, isOpen }) {
 
   const onFinish = async (values) => {
     setLoading(true)
+    const payload = { ...values }
+    payload.file = fileList?.[0]?.['name']
     try {
       const response = await Axios({
         method: 'POST',
         url: '/api/leave/create',
-        data: values,
+        data: payload,
       })
       if (response.status === 200) {
         form.resetFields()
@@ -58,6 +62,54 @@ export default function Popup({ onClose, isOpen }) {
       [0, 6].includes(day)
     )
   }
+
+  const HandleChangeUpload = (event) => {
+    if (event?.file?.status === 'removed') {
+      setFileList(event?.fileList)
+    }
+  }
+
+  const HandleBeforeUpload = async (file) => {
+    notification.info({
+      message: 'Info',
+      description: 'Upload file ...',
+      duration: 1,
+    })
+    const formData = new FormData()
+    formData.append('file', file)
+    const response = await Axios({
+      url: process.env.NEXT_PUBLIC_UPLOAD_URL,
+      method: 'POST',
+      headers: {
+        'x-api-key': `${process.env.NEXT_PUBLIC_API_KEY}`,
+      },
+      data: formData,
+    })
+    if (response?.status === 201) {
+      setFileList((oldArray) => [
+        ...oldArray,
+        {
+          uid: oldArray.length + 1,
+          name: `${response?.data?.data?.name}`,
+          status: 'done',
+          url: `${response?.data?.data?.url}`,
+        },
+      ])
+      notification.success({
+        message: 'Info',
+        description: 'Upload berhasil',
+        duration: 2,
+      })
+    } else {
+      notification.error({
+        message: 'Info',
+        description: 'Upload gagal',
+        duration: 2,
+      })
+    }
+  }
+
+  console.log('value => ', form.getFieldValue())
 
   return (
     <Drawer
@@ -121,6 +173,17 @@ export default function Popup({ onClose, isOpen }) {
           <DatePicker.RangePicker
             disabledDate={disableWeekend}
             size="large"
+          />
+        </Form.Item>
+        <Form.Item
+          label="File pendukung (Gambar/Surat Keterangan)"
+          name="file"
+        >
+          <UploadFile
+            fileList={fileList}
+            onChange={HandleChangeUpload}
+            onBeforeUpload={HandleBeforeUpload}
+            maxLength={1}
           />
         </Form.Item>
         <Form.Item

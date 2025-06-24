@@ -12,10 +12,21 @@ async function handler(req, res, session) {
 
   try {
     const ids = req.query.ids?.split(',').map(Number)
+    const payload =
+      req.query.type === 'decline'
+        ? {
+            ...req.body,
+            accepted: 'declined',
+            updated_at: sql`NOW()`,
+          }
+        : {
+            accepted: 'accepted',
+            updated_at: sql`NOW()`,
+          }
 
     const data = await db
       .update(attendancesTable)
-      .set({ is_accepted: 1, updated_at: sql`NOW()` })
+      .set(payload)
       .where(and(inArray(attendancesTable.id, ids)))
 
     res.status(200).json(data)

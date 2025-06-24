@@ -21,8 +21,9 @@ async function handler(req, res, session) {
         ANY_VALUE(${usersTable.name}) as user_name,
         ANY_VALUE(${usersTable.email}) as user_email,
         ANY_VALUE(${attendancesTable.status}) as status,
+        ANY_VALUE(${attendancesTable.file}) as file,
         ANY_VALUE(${attendancesTable.description}) as description,
-        ANY_VALUE(${attendancesTable.is_accepted}) as is_accepted,
+        ANY_VALUE(${attendancesTable.accepted}) as accepted,
         ANY_VALUE(${attendancesTable.created_at}) as created_at,
         ANY_VALUE(${attendancesTable.updated_at}) as updated_at
       FROM ${attendancesTable}

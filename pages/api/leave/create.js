@@ -34,7 +34,8 @@ async function handler(req, res, session) {
         coordinates: 'lat,lng',
         status: 'leave',
         description: payload.description || null,
-        is_accepted: false,
+        file: payload.file || null,
+        accepted: 'in_progress',
         created_at_local: date,
       }))
 

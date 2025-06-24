@@ -48,7 +48,7 @@ async function handler(req, res, session) {
         if (!isAttended) {
           const result = await db.insert(attendancesTable).values({
             ...payload,
-            is_accepted: true,
+            accepted: 'accepted',
             [type]: dayjs()
               .tz(process.env.LOCAL_TIMEZONE)
               .format('HH:mm:ss'),

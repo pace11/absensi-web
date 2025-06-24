@@ -23,7 +23,7 @@ async function handler(req, res, session) {
         YEAR(${attendancesTable.created_at_local})=${currentYear} 
         AND MONTH(${attendancesTable.created_at_local})=${currentMonth} 
         AND ${attendancesTable.user_id}=${userId}
-        AND ${attendancesTable.is_accepted}=1`,
+        AND ${attendancesTable.accepted}='accepted'`,
       )
       .then((res) => res[0])
 
@@ -40,7 +40,11 @@ async function handler(req, res, session) {
             UNION ALL
             SELECT 'leave'
           ) AS s
-        LEFT JOIN ${attendancesTable} t ON t.status = s.status AND t.user_id = ${userId} AND YEAR(t.created_at_local)=${currentYear}
+        LEFT JOIN ${attendancesTable} t 
+          ON t.status = s.status
+          AND t.user_id = ${userId}
+          AND YEAR(t.created_at_local)=${currentYear}
+          AND t.accepted != 'declined'
         GROUP BY s.status`,
       )
       .then((res) =>

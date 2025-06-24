@@ -1,7 +1,7 @@
 {
   "version": "5",
   "dialect": "mysql",
-  "id": "ce3c82ce-3da0-4d56-b88b-98ef1bf0ddd9",
+  "id": "8b3e0778-77f4-424f-8989-05b869c74340",
   "prevId": "00000000-0000-0000-0000-000000000000",
   "tables": {
     "attendances": {
@@ -57,11 +57,19 @@
           "notNull": false,
           "autoincrement": false
         },
-        "is_accepted": {
-          "name": "is_accepted",
-          "type": "boolean",
+        "accepted": {
+          "name": "accepted",
+          "type": "enum('in_progress','accepted','declined')",
           "primaryKey": false,
-          "notNull": true,
+          "notNull": false,
+          "autoincrement": false,
+          "default": "'in_progress'"
+        },
+        "file": {
+          "name": "file",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false,
           "autoincrement": false
         },
         "created_at_local": {

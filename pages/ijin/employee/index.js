@@ -15,6 +15,7 @@ import {
   ReloadOutlined,
   ExclamationCircleOutlined,
   DeleteOutlined,
+  LinkOutlined,
 } from '@ant-design/icons'
 import { useState } from 'react'
 import dynamic from 'next/dynamic'
@@ -85,14 +86,29 @@ export default function IjinEmployee() {
       render: ({ duration }) => `${duration} Hari`,
     },
     {
+      title: 'File Pendukung',
+      key: 'file',
+      render: ({ file }) =>
+        file ? (
+          <a
+            href={`${process.env.NEXT_PUBLIC_PREVIEW_URL}/${file}`}
+            target="_blank"
+          >
+            File <LinkOutlined />
+          </a>
+        ) : (
+          ''
+        ),
+    },
+    {
       title: 'Keterangan',
       key: 'description',
       dataIndex: 'description',
     },
     {
       title: 'Status',
-      key: 'is_accepted',
-      render: ({ is_accepted }) => badgeStatusLeave(is_accepted),
+      key: 'accepted',
+      render: ({ accepted }) => badgeStatusLeave(accepted),
     },
     {
       title: 'Tanggal dibuat',
@@ -105,7 +121,7 @@ export default function IjinEmployee() {
     {
       title: 'Aksi',
       render: (item) =>
-        !Boolean(item.is_accepted) ? (
+        !['declined', 'accepted'].includes(item.accepted) ? (
           <Space direction="horizontal">
             <Button
               danger
