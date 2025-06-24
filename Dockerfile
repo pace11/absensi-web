@@ -1,9 +1,9 @@
-FROM node:22.14.0-alpine
+FROM node:22.14.0
 
 WORKDIR /app
 
 COPY package*.json ./
-RUN apk add --no-cache python3 make g++ && npm ci --omit=dev
+RUN npm ci --omit=dev
 COPY . .
 
 COPY .env .env
